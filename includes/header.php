@@ -84,6 +84,9 @@ header('Content-Type: text/html; charset=utf-8');
                 <a href="salles.php" class="block px-6 py-3 hover:bg-blue-700 transition <?php echo basename($_SERVER['PHP_SELF']) == 'salles.php' ? 'bg-blue-700' : ''; ?>">
                     <i class="fas fa-door-open mr-3"></i>Salles
                 </a>
+                <a href="users.php" class="block px-6 py-3 hover:bg-blue-700 transition <?php echo basename($_SERVER['PHP_SELF']) == 'users.php' ? 'bg-blue-700' : ''; ?>">
+                    <i class="fas fa-user-cog mr-3"></i>Utilisateurs
+                </a>
                 <hr class="my-3 border-blue-600">
                 <a href="statistiques.php" class="block px-6 py-3 hover:bg-blue-700 transition <?php echo basename($_SERVER['PHP_SELF']) == 'statistiques.php' ? 'bg-blue-700' : ''; ?>">
                     <i class="fas fa-chart-pie mr-3"></i>Statistiques
@@ -106,9 +109,32 @@ header('Content-Type: text/html; charset=utf-8');
                         <button class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg">
                             <i class="fas fa-bell text-lg"></i>
                         </button>
-                        <div class="flex items-center space-x-2">
-                            <div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
-                                <i class="fas fa-user"></i>
+                        <div class="relative group">
+                            <div class="flex items-center space-x-2 cursor-pointer p-2 hover:bg-gray-100 rounded-lg transition">
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="hidden md:block">
+                                    <p class="text-sm font-bold text-gray-800"><?php echo isset($_SESSION['user_name']) ? htmlspecialchars($_SESSION['user_name']) : 'Utilisateur'; ?></p>
+                                    <p class="text-xs text-gray-600"><?php echo isset($_SESSION['user_role']) ? htmlspecialchars($_SESSION['user_role']) : ''; ?></p>
+                                </div>
+                            </div>
+                            <!-- Dropdown Menu -->
+                            <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg hidden group-hover:block z-50">
+                                <div class="p-4 border-b border-gray-200">
+                                    <p class="text-sm font-bold text-gray-800"><?php echo isset($_SESSION['user_name']) ? htmlspecialchars($_SESSION['user_name']) : 'Utilisateur'; ?></p>
+                                    <p class="text-xs text-gray-600"><?php echo isset($_SESSION['user_email']) ? htmlspecialchars($_SESSION['user_email']) : ''; ?></p>
+                                </div>
+                                <a href="profile.php" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
+                                    <i class="fas fa-user-circle mr-2"></i>Mon profil
+                                </a>
+                                <a href="settings.php" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
+                                    <i class="fas fa-cog mr-2"></i>Paramètres
+                                </a>
+                                <hr class="my-2">
+                                <a href="logout.php" class="block px-4 py-2 text-red-600 hover:bg-red-50 text-sm font-bold">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
+                                </a>
                             </div>
                         </div>
                     </div>

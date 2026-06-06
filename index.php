@@ -46,7 +46,7 @@ header('Content-Type: text/html; charset=utf-8');
                 <i class="fas fa-graduation-cap text-3xl"></i>
                 <h1 class="text-2xl font-bold">GCF</h1>
             </div>
-            <a href="pages/dashboard.php" class="bg-white text-purple-600 px-6 py-2 rounded-full font-bold hover:bg-gray-100 transition">
+            <a href="login.php" class="bg-white text-purple-600 px-6 py-2 rounded-full font-bold hover:bg-gray-100 transition">
                 Tableau de Bord
             </a>
         </div>
@@ -64,7 +64,7 @@ header('Content-Type: text/html; charset=utf-8');
                     Une plateforme moderne et intuitive pour gérer efficacement vos apprenants, filières, inscriptions et paiements.
                 </p>
                 <div class="flex space-x-4">
-                    <a href="pages/dashboard.php" class="bg-white text-purple-600 px-8 py-4 rounded-lg font-bold hover:bg-gray-100 transition flex items-center">
+                    <a href="login.php" class="bg-white text-purple-600 px-8 py-4 rounded-lg font-bold hover:bg-gray-100 transition flex items-center">
                         <i class="fas fa-arrow-right mr-2"></i>Commencer
                     </a>
                     <a href="#features" class="border-2 border-white text-white px-8 py-4 rounded-lg font-bold hover:bg-white hover:bg-opacity-10 transition flex items-center">
@@ -196,7 +196,7 @@ header('Content-Type: text/html; charset=utf-8');
         <div class="glass-effect rounded-3xl p-12 text-center">
             <h3 class="text-4xl font-bold text-gray-800 mb-6">Prêt à Commencer ?</h3>
             <p class="text-xl text-gray-600 mb-8">Accédez à votre tableau de bord et commencez à gérer votre centre de formation dès maintenant</p>
-            <a href="pages/dashboard.php" class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-10 py-4 rounded-lg font-bold hover:shadow-lg transition inline-flex items-center">
+            <a href="login.php" class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-10 py-4 rounded-lg font-bold hover:shadow-lg transition inline-flex items-center">
                 <i class="fas fa-rocket mr-2"></i>Lancer l'Application
             </a>
         </div>

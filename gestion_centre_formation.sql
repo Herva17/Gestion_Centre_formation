@@ -116,6 +116,26 @@ CREATE TABLE `salle` (
   `capacite` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `utilisateur`
+--
+
+CREATE TABLE `utilisateur` (
+  `id_utilisateur` int(11) NOT NULL,
+  `nom` varchar(100) NOT NULL,
+  `prenom` varchar(100) NOT NULL,
+  `sexe` varchar(10) DEFAULT NULL,
+  `telephone` varchar(20) UNIQUE DEFAULT NULL,
+  `email` varchar(150) UNIQUE NOT NULL,
+  `nom_utilisateur` varchar(50) UNIQUE NOT NULL,
+  `mot_de_passe` varchar(255) NOT NULL,
+  `role` varchar(50) NOT NULL,
+  `statut` varchar(20) DEFAULT 'Actif',
+  `date_creation` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 --
 -- Index pour les tables déchargées
 --
@@ -169,6 +189,15 @@ ALTER TABLE `salle`
   ADD PRIMARY KEY (`id_salle`);
 
 --
+-- Index pour la table `utilisateur`
+--
+ALTER TABLE `utilisateur`
+  ADD PRIMARY KEY (`id_utilisateur`),
+  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `nom_utilisateur` (`nom_utilisateur`),
+  ADD UNIQUE KEY `telephone` (`telephone`);
+
+--
 -- AUTO_INCREMENT pour les tables déchargées
 --
 
@@ -213,6 +242,12 @@ ALTER TABLE `paiement`
 --
 ALTER TABLE `salle`
   MODIFY `id_salle` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `utilisateur`
+--
+ALTER TABLE `utilisateur`
+  MODIFY `id_utilisateur` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Contraintes pour les tables déchargées

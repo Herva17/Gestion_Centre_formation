@@ -20,7 +20,8 @@
 │   ├── Paiement.php                     [Gestion des paiements]
 │   ├── Cours.php                        [Gestion des cours]
 │   ├── Salle.php                        [Gestion des salles]
-│   └── Horaire.php                      [Gestion des horaires]
+│   ├── Horaire.php                      [Gestion des horaires]
+│   └── Utilisateur.php                  [Gestion des utilisateurs & authentification]
 │
 ├── 📁 pages/                            [Pages de l'application]
 │   ├── dashboard.php                    [Tableau de bord principal]
@@ -32,6 +33,7 @@
 │   ├── paiements.php                    [Gestion des paiements]
 │   ├── horaires.php                     [Gestion des horaires]
 │   ├── salles.php                       [Gestion des salles]
+│   ├── users.php                        [Gestion des utilisateurs]
 │   ├── statistiques.php                 [Statistiques détaillées]
 │   └── api-docs.php                     [Documentation API]
 │
