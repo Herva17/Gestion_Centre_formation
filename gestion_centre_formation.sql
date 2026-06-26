@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Hôte : 127.0.0.1
--- Généré le : sam. 06 juin 2026 à 20:01
--- Version du serveur : 10.4.32-MariaDB
--- Version de PHP : 8.2.12
+-- Host: 127.0.0.1
+-- Generation Time: Jun 26, 2026 at 07:37 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de données : `gestion_centre_formation`
+-- Database: `gestion_centre_formation`
 --
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `apprenant`
+-- Table structure for table `apprenant`
 --
 
 CREATE TABLE `apprenant` (
@@ -35,10 +35,17 @@ CREATE TABLE `apprenant` (
   `adresse` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `apprenant`
+--
+
+INSERT INTO `apprenant` (`id_apprenant`, `nom`, `prenom`, `telephone`, `adresse`) VALUES
+(1, 'Fortune', 'fortune', '0997236154', 'Himbi');
+
 -- --------------------------------------------------------
 
 --
--- Structure de la table `cours`
+-- Table structure for table `cours`
 --
 
 CREATE TABLE `cours` (
@@ -48,10 +55,18 @@ CREATE TABLE `cours` (
   `id_filiere` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `cours`
+--
+
+INSERT INTO `cours` (`id_cours`, `nom`, `description`, `id_filiere`) VALUES
+(1, 'Bureautique', 'Fortune', 0),
+(2, 'Excel', '', 1);
+
 -- --------------------------------------------------------
 
 --
--- Structure de la table `filiere`
+-- Table structure for table `filiere`
 --
 
 CREATE TABLE `filiere` (
@@ -61,10 +76,19 @@ CREATE TABLE `filiere` (
   `frais_mensuel` decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `filiere`
+--
+
+INSERT INTO `filiere` (`id_filiere`, `nom`, `duree`, `frais_mensuel`) VALUES
+(1, 'Informatique', '6 mois', 20.00),
+(2, 'Art culinaire', '6 Mois', 20.00),
+(3, 'Anglais', '6 MOIS', 20.00);
+
 -- --------------------------------------------------------
 
 --
--- Structure de la table `horaire`
+-- Table structure for table `horaire`
 --
 
 CREATE TABLE `horaire` (
@@ -76,10 +100,18 @@ CREATE TABLE `horaire` (
   `id_cours` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `horaire`
+--
+
+INSERT INTO `horaire` (`id_horaire`, `jour`, `heure_debut`, `heure_fin`, `id_salle`, `id_cours`) VALUES
+(1, 'Lundi', '09:00:00', '12:30:00', 1, 1),
+(2, 'Mardi', '09:00:00', '11:00:00', 1, 2);
+
 -- --------------------------------------------------------
 
 --
--- Structure de la table `inscription`
+-- Table structure for table `inscription`
 --
 
 CREATE TABLE `inscription` (
@@ -90,10 +122,17 @@ CREATE TABLE `inscription` (
   `id_filiere` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `inscription`
+--
+
+INSERT INTO `inscription` (`id_inscription`, `date_inscription`, `frais_inscription`, `id_apprenant`, `id_filiere`) VALUES
+(2, '2026-06-26', 40.00, 1, 1);
+
 -- --------------------------------------------------------
 
 --
--- Structure de la table `paiement`
+-- Table structure for table `paiement`
 --
 
 CREATE TABLE `paiement` (
@@ -101,13 +140,22 @@ CREATE TABLE `paiement` (
   `montant` decimal(10,2) NOT NULL,
   `type` varchar(50) DEFAULT NULL,
   `mois` varchar(30) DEFAULT NULL,
-  `id_inscription` int(11) DEFAULT NULL
+  `id_inscription` int(11) DEFAULT NULL,
+  `date_creation` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `paiement`
+--
+
+INSERT INTO `paiement` (`id_paiement`, `montant`, `type`, `mois`, `id_inscription`, `date_creation`) VALUES
+(1, 30.00, 'Espèces', 'JUILLET', 0, '2026-06-26 11:09:37'),
+(2, 20.00, 'Espèces', 'Mars', 2, '2026-06-26 11:09:37');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `salle`
+-- Table structure for table `salle`
 --
 
 CREATE TABLE `salle` (
@@ -116,10 +164,18 @@ CREATE TABLE `salle` (
   `capacite` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `salle`
+--
+
+INSERT INTO `salle` (`id_salle`, `nom`, `capacite`) VALUES
+(1, 'Salle A', 40),
+(2, 'Departement Marketing', 30);
+
 -- --------------------------------------------------------
 
 --
--- Structure de la table `utilisateur`
+-- Table structure for table `utilisateur`
 --
 
 CREATE TABLE `utilisateur` (
@@ -127,40 +183,49 @@ CREATE TABLE `utilisateur` (
   `nom` varchar(100) NOT NULL,
   `prenom` varchar(100) NOT NULL,
   `sexe` varchar(10) DEFAULT NULL,
-  `telephone` varchar(20) UNIQUE DEFAULT NULL,
-  `email` varchar(150) UNIQUE NOT NULL,
-  `nom_utilisateur` varchar(50) UNIQUE NOT NULL,
+  `telephone` varchar(20) DEFAULT NULL,
+  `email` varchar(150) NOT NULL,
+  `nom_utilisateur` varchar(50) NOT NULL,
   `mot_de_passe` varchar(255) NOT NULL,
   `role` varchar(50) NOT NULL,
   `statut` varchar(20) DEFAULT 'Actif',
-  `date_creation` datetime DEFAULT CURRENT_TIMESTAMP
+  `date_creation` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Index pour les tables déchargées
+-- Dumping data for table `utilisateur`
+--
+
+INSERT INTO `utilisateur` (`id_utilisateur`, `nom`, `prenom`, `sexe`, `telephone`, `email`, `nom_utilisateur`, `mot_de_passe`, `role`, `statut`, `date_creation`) VALUES
+(0, 'FORTUNE', 'FORTUNE', 'Féminin', '0990674538', 'herveiragi80@gmail.com', 'Fortune', '$2y$10$AP/RQ2x0CaykBTK2iOtRieiib6KklrEOZLDwnkmrkHDJjhwWQ6/vG', 'Gestionnaire', 'Actif', '2026-06-26 18:48:48'),
+(0, 'Thomas', 'KIBUNZI', 'Masculin', '+243997236154', 'kibunzithomas@gmail.com', 'THOMS', '$2y$10$83sk9IECovVuVvAdyPuryeCBwuSA6IVyPfm5H5JPm7VLUW8CGOW.q', 'Admin', 'Actif', '2026-06-20 13:47:54'),
+(0, 'ZIGABE', 'FEZA', 'Féminin', '0990505916', 'zigabefeza@gmail.com', 'sZigabe', '$2y$10$.PBIiv8xBVNIBYfwBcIwHOj6vgPoDh311pVWwQqyF21B6PrpFJPGC', 'Admin', 'Actif', '2026-06-26 18:56:20');
+
+--
+-- Indexes for dumped tables
 --
 
 --
--- Index pour la table `apprenant`
+-- Indexes for table `apprenant`
 --
 ALTER TABLE `apprenant`
   ADD PRIMARY KEY (`id_apprenant`);
 
 --
--- Index pour la table `cours`
+-- Indexes for table `cours`
 --
 ALTER TABLE `cours`
   ADD PRIMARY KEY (`id_cours`),
   ADD KEY `fk_cours_filiere` (`id_filiere`);
 
 --
--- Index pour la table `filiere`
+-- Indexes for table `filiere`
 --
 ALTER TABLE `filiere`
   ADD PRIMARY KEY (`id_filiere`);
 
 --
--- Index pour la table `horaire`
+-- Indexes for table `horaire`
 --
 ALTER TABLE `horaire`
   ADD PRIMARY KEY (`id_horaire`),
@@ -168,7 +233,7 @@ ALTER TABLE `horaire`
   ADD KEY `fk_horaire_cours` (`id_cours`);
 
 --
--- Index pour la table `inscription`
+-- Indexes for table `inscription`
 --
 ALTER TABLE `inscription`
   ADD PRIMARY KEY (`id_inscription`),
@@ -176,108 +241,101 @@ ALTER TABLE `inscription`
   ADD KEY `fk_inscription_filiere` (`id_filiere`);
 
 --
--- Index pour la table `paiement`
+-- Indexes for table `paiement`
 --
 ALTER TABLE `paiement`
   ADD PRIMARY KEY (`id_paiement`),
   ADD KEY `fk_paiement_inscription` (`id_inscription`);
 
 --
--- Index pour la table `salle`
+-- Indexes for table `salle`
 --
 ALTER TABLE `salle`
   ADD PRIMARY KEY (`id_salle`);
 
 --
--- Index pour la table `utilisateur`
+-- Indexes for table `utilisateur`
 --
 ALTER TABLE `utilisateur`
-  ADD PRIMARY KEY (`id_utilisateur`),
   ADD UNIQUE KEY `email` (`email`),
   ADD UNIQUE KEY `nom_utilisateur` (`nom_utilisateur`),
   ADD UNIQUE KEY `telephone` (`telephone`);
 
 --
--- AUTO_INCREMENT pour les tables déchargées
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT pour la table `apprenant`
+-- AUTO_INCREMENT for table `apprenant`
 --
 ALTER TABLE `apprenant`
-  MODIFY `id_apprenant` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_apprenant` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT pour la table `cours`
+-- AUTO_INCREMENT for table `cours`
 --
 ALTER TABLE `cours`
-  MODIFY `id_cours` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_cours` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT pour la table `filiere`
+-- AUTO_INCREMENT for table `filiere`
 --
 ALTER TABLE `filiere`
-  MODIFY `id_filiere` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_filiere` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT pour la table `horaire`
+-- AUTO_INCREMENT for table `horaire`
 --
 ALTER TABLE `horaire`
-  MODIFY `id_horaire` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_horaire` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT pour la table `inscription`
+-- AUTO_INCREMENT for table `inscription`
 --
 ALTER TABLE `inscription`
-  MODIFY `id_inscription` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_inscription` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT pour la table `paiement`
+-- AUTO_INCREMENT for table `paiement`
 --
 ALTER TABLE `paiement`
-  MODIFY `id_paiement` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_paiement` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT pour la table `salle`
+-- AUTO_INCREMENT for table `salle`
 --
 ALTER TABLE `salle`
-  MODIFY `id_salle` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_salle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT pour la table `utilisateur`
---
-ALTER TABLE `utilisateur`
-  MODIFY `id_utilisateur` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- Contraintes pour les tables déchargées
+-- Constraints for dumped tables
 --
 
 --
--- Contraintes pour la table `cours`
+-- Constraints for table `cours`
 --
 ALTER TABLE `cours`
-  ADD CONSTRAINT `fk_cours_filiere` FOREIGN KEY (`id_filiere`) REFERENCES `filiere` (`id_filiere`);
+  ADD CONSTRAINT `cours_ibfk_1` FOREIGN KEY (`id_filiere`) REFERENCES `filiere` (`id_filiere`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Contraintes pour la table `horaire`
+-- Constraints for table `horaire`
 --
 ALTER TABLE `horaire`
-  ADD CONSTRAINT `fk_horaire_cours` FOREIGN KEY (`id_cours`) REFERENCES `cours` (`id_cours`),
-  ADD CONSTRAINT `fk_horaire_salle` FOREIGN KEY (`id_salle`) REFERENCES `salle` (`id_salle`);
+  ADD CONSTRAINT `horaire_ibfk_1` FOREIGN KEY (`id_salle`) REFERENCES `salle` (`id_salle`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `horaire_ibfk_2` FOREIGN KEY (`id_cours`) REFERENCES `cours` (`id_cours`);
 
 --
--- Contraintes pour la table `inscription`
+-- Constraints for table `inscription`
 --
 ALTER TABLE `inscription`
-  ADD CONSTRAINT `fk_inscription_apprenant` FOREIGN KEY (`id_apprenant`) REFERENCES `apprenant` (`id_apprenant`),
-  ADD CONSTRAINT `fk_inscription_filiere` FOREIGN KEY (`id_filiere`) REFERENCES `filiere` (`id_filiere`);
+  ADD CONSTRAINT `inscription_ibfk_1` FOREIGN KEY (`id_apprenant`) REFERENCES `apprenant` (`id_apprenant`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `inscription_ibfk_2` FOREIGN KEY (`id_filiere`) REFERENCES `filiere` (`id_filiere`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Contraintes pour la table `paiement`
+-- Constraints for table `paiement`
 --
 ALTER TABLE `paiement`
-  ADD CONSTRAINT `fk_paiement_inscription` FOREIGN KEY (`id_inscription`) REFERENCES `inscription` (`id_inscription`);
+  ADD CONSTRAINT `paiement_ibfk_1` FOREIGN KEY (`id_inscription`) REFERENCES `inscription` (`id_inscription`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
