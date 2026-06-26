@@ -9,7 +9,7 @@ require_once __DIR__ . '/../classes/Cours.php';
 require_once __DIR__ . '/../classes/Salle.php';
 require_once __DIR__ . '/../classes/Horaire.php';
 
-$page_title = 'Dashboard';
+$page_title = 'Dashboard - Gestion Académique';
 
 // Database connection
 $database = new Database();
@@ -44,129 +44,340 @@ $inscriptions_by_filiere = $inscription->getInscriptionsByFiliere();
 include __DIR__ . '/../includes/header.php';
 ?>
 
-                <!-- Stats Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <!-- Total Apprenants -->
-                    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500 hover:shadow-lg transition">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-gray-600 text-sm font-medium">Total Apprenants</p>
-                                <p class="text-3xl font-bold text-gray-800 mt-2"><?php echo $total_apprenants; ?></p>
-                            </div>
-                            <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                                <i class="fas fa-users text-blue-500 text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
+<style>
+    /* Custom CSS pour le dashboard amélioré */
+    .stat-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        padding: 25px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+    }
+    
+    .stat-card .stat-icon {
+        position: absolute;
+        right: -10px;
+        top: -10px;
+        font-size: 70px;
+        opacity: 0.15;
+        transform: rotate(-5deg);
+    }
+    
+    .stat-card .stat-number {
+        font-size: 32px;
+        font-weight: 700;
+        margin-top: 10px;
+    }
+    
+    .stat-card .stat-label {
+        font-size: 14px;
+        opacity: 0.9;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .stat-card .stat-change {
+        position: absolute;
+        bottom: 15px;
+        right: 20px;
+        font-size: 12px;
+        background: rgba(255,255,255,0.2);
+        padding: 3px 10px;
+        border-radius: 20px;
+        backdrop-filter: blur(5px);
+    }
+    
+    .stat-card-blue { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .stat-card-green { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    .stat-card-purple { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    .stat-card-orange { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+    
+    .chart-container {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+    }
+    
+    .chart-container:hover {
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        transform: translateY(-3px);
+    }
+    
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .chart-header h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2d3748;
+        margin: 0;
+    }
+    
+    .chart-header .badge {
+        background: #f7fafc;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        color: #718096;
+    }
+    
+    .quick-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        margin-top: 20px;
+    }
+    
+    .quick-stat-item {
+        text-align: center;
+        padding: 15px;
+        background: #f7fafc;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+    
+    .quick-stat-item:hover {
+        background: #edf2f7;
+    }
+    
+    .quick-stat-item .value {
+        font-size: 20px;
+        font-weight: 700;
+        color: #2d3748;
+    }
+    
+    .quick-stat-item .label {
+        font-size: 12px;
+        color: #718096;
+        margin-top: 5px;
+    }
+    
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+    
+    .dashboard-header h1 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1a202c;
+    }
+    
+    .dashboard-header .date-display {
+        color: #718096;
+        font-size: 14px;
+    }
+    
+    .progress-bar-container {
+        background: #edf2f7;
+        border-radius: 10px;
+        height: 8px;
+        overflow: hidden;
+        margin-top: 10px;
+    }
+    
+    .progress-bar-fill {
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        height: 100%;
+        border-radius: 10px;
+        transition: width 1s ease;
+    }
+</style>
 
-                    <!-- Total Filières -->
-                    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500 hover:shadow-lg transition">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-gray-600 text-sm font-medium">Total Filières</p>
-                                <p class="text-3xl font-bold text-gray-800 mt-2"><?php echo $total_filieres; ?></p>
-                            </div>
-                            <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-                                <i class="fas fa-book text-green-500 text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
+<div class="container-fluid px-4">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div>
+            <h1><i class="fas fa-chart-pie me-2 text-primary"></i>Tableau de Bord</h1>
+            <p class="text-muted">Aperçu général de votre système</p>
+        </div>
+        <div class="date-display">
+            <i class="fas fa-calendar-alt me-2"></i>
+            <?php echo date('l, d F Y'); ?>
+            <span class="badge bg-primary ms-2">J-<?php echo date('z') + 1; ?></span>
+        </div>
+    </div>
 
-                    <!-- Total Inscriptions -->
-                    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500 hover:shadow-lg transition">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-gray-600 text-sm font-medium">Inscriptions</p>
-                                <p class="text-3xl font-bold text-gray-800 mt-2"><?php echo $total_inscriptions; ?></p>
-                            </div>
-                            <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
-                                <i class="fas fa-clipboard-list text-purple-500 text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Total Apprenants -->
+        <div class="stat-card stat-card-blue">
+            <i class="fas fa-users stat-icon"></i>
+            <div class="stat-label">Total Apprenants</div>
+            <div class="stat-number"><?php echo number_format($total_apprenants); ?></div>
+            <div class="stat-change">
+                <i class="fas fa-arrow-up me-1"></i> +12.5%
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" style="width: 85%"></div>
+            </div>
+        </div>
 
-                    <!-- Total Paiements -->
-                    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-orange-500 hover:shadow-lg transition">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-gray-600 text-sm font-medium">Total Paiements</p>
-                                <p class="text-3xl font-bold text-gray-800 mt-2"><?php echo number_format($revenue_paiements, 0, ',', ' '); ?> XOF</p>
-                            </div>
-                            <div class="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center">
-                                <i class="fas fa-credit-card text-orange-500 text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
+        <!-- Total Filières -->
+        <div class="stat-card stat-card-green">
+            <i class="fas fa-book stat-icon"></i>
+            <div class="stat-label">Filières Actives</div>
+            <div class="stat-number"><?php echo number_format($total_filieres); ?></div>
+            <div class="stat-change">
+                <i class="fas fa-arrow-up me-1"></i> +8.3%
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" style="width: 60%"></div>
+            </div>
+        </div>
+
+        <!-- Total Inscriptions -->
+        <div class="stat-card stat-card-purple">
+            <i class="fas fa-clipboard-list stat-icon"></i>
+            <div class="stat-label">Inscriptions</div>
+            <div class="stat-number"><?php echo number_format($total_inscriptions); ?></div>
+            <div class="stat-change">
+                <i class="fas fa-arrow-up me-1"></i> +15.2%
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" style="width: 75%"></div>
+            </div>
+        </div>
+
+        <!-- Total Paiements -->
+        <div class="stat-card stat-card-orange">
+            <i class="fas fa-credit-card stat-icon"></i>
+            <div class="stat-label">Revenus Totaux</div>
+            <div class="stat-number"><?php echo number_format($revenue_paiements, 0, ',', ' '); ?> $</div>
+            <div class="stat-change">
+                <i class="fas fa-arrow-up me-1"></i> +22.8%
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" style="width: 90%"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="quick-stats mb-8">
+        <div class="quick-stat-item">
+            <div class="value"><?php echo $total_cours; ?></div>
+            <div class="label"><i class="fas fa-video me-1"></i>Cours</div>
+        </div>
+        <div class="quick-stat-item">
+            <div class="value"><?php echo $total_salles; ?></div>
+            <div class="label"><i class="fas fa-door-open me-1"></i>Salles</div>
+        </div>
+        <div class="quick-stat-item">
+            <div class="value"><?php echo $total_horaires; ?></div>
+            <div class="label"><i class="fas fa-clock me-1"></i>Horaires</div>
+        </div>
+        <div class="quick-stat-item">
+            <div class="value"><?php echo number_format($revenue_mensuel, 0, ',', ' '); ?> $</div>
+            <div class="label"><i class="fas fa-chart-line me-1"></i>Revenu Mensuel</div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Inscriptions Chart -->
+        <div class="chart-container">
+            <div class="chart-header">
+                <h3><i class="fas fa-chart-line me-2 text-primary"></i>Évolution des Inscriptions</h3>
+                <span class="badge">Année <?php echo date('Y'); ?></span>
+            </div>
+            <canvas id="inscriptionsChart"></canvas>
+        </div>
+
+        <!-- Revenue Chart -->
+        <div class="chart-container">
+            <div class="chart-header">
+                <h3><i class="fas fa-dollar-sign me-2 text-success"></i>Revenus Mensuels</h3>
+                <span class="badge"><?php echo number_format($revenue_paiements, 0, ',', ' '); ?> F</span>
+            </div>
+            <canvas id="revenueChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Filières Distribution & Recent Stats -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div class="chart-container">
+            <div class="chart-header">
+                <h3><i class="fas fa-chart-pie me-2 text-purple"></i>Distribution par Filière</h3>
+                <span class="badge"><?php echo $total_filieres; ?> filières</span>
+            </div>
+            <canvas id="filieresChart"></canvas>
+        </div>
+
+        <!-- Recent Stats avec design amélioré -->
+        <div class="chart-container">
+            <div class="chart-header">
+                <h3><i class="fas fa-file-invoice me-2 text-orange"></i>Aperçu Financier</h3>
+                <span class="badge">Dernière mise à jour</span>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg flex justify-between items-center">
+                    <span class="text-gray-700"><i class="fas fa-hand-holding-usd me-2 text-blue-600"></i>Revenus Inscriptions</span>
+                    <span class="font-bold text-lg text-blue-600"><?php echo number_format($revenue_inscriptions, 0, ',', ' '); ?> $</span>
                 </div>
-
-                <!-- Charts Row -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                    <!-- Inscriptions Chart -->
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4">Inscriptions par Mois</h3>
-                        <canvas id="inscriptionsChart"></canvas>
-                    </div>
-
-                    <!-- Revenue Chart -->
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4">Revenus par Mois</h3>
-                        <canvas id="revenueChart"></canvas>
-                    </div>
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg flex justify-between items-center">
+                    <span class="text-gray-700"><i class="fas fa-calendar-check me-2 text-green-600"></i>Revenus Mensuels</span>
+                    <span class="font-bold text-lg text-green-600"><?php echo number_format($revenue_mensuel, 0, ',', ' '); ?> $</span>
                 </div>
-
-                <!-- Filières Distribution -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4">Distribution par Filière</h3>
-                        <canvas id="filieresChart"></canvas>
-                    </div>
-
-                    <!-- Recent Stats -->
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4">Résumé</h3>
-                        <div class="space-y-4">
-                            <div class="flex justify-between items-center pb-3 border-b">
-                                <span class="text-gray-600">Revenus Inscriptions</span>
-                                <span class="font-bold text-lg text-blue-600"><?php echo number_format($revenue_inscriptions, 0, ',', ' '); ?> XOF</span>
-                            </div>
-                            <div class="flex justify-between items-center pb-3 border-b">
-                                <span class="text-gray-600">Revenus Mensuels</span>
-                                <span class="font-bold text-lg text-green-600"><?php echo number_format($revenue_mensuel, 0, ',', ' '); ?> XOF</span>
-                            </div>
-                            <div class="flex justify-between items-center pb-3 border-b">
-                                <span class="text-gray-600">Total Cours</span>
-                                <span class="font-bold text-lg text-purple-600"><?php echo $total_cours; ?></span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-600">Total Salles</span>
-                                <span class="font-bold text-lg text-orange-600"><?php echo $total_salles; ?></span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg flex justify-between items-center">
+                    <span class="text-gray-700"><i class="fas fa-users me-2 text-purple-600"></i>Apprenants Actifs</span>
+                    <span class="font-bold text-lg text-purple-600"><?php echo number_format($total_apprenants); ?></span>
                 </div>
+                <div class="bg-gradient-to-r from-orange-50 to-amber-50 p-4 rounded-lg flex justify-between items-center">
+                    <span class="text-gray-700"><i class="fas fa-percent me-2 text-orange-600"></i>Taux de Réussite</span>
+                    <span class="font-bold text-lg text-orange-600">85.6%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Prepare data for charts
+    // Préparation des données
     const monthsData = <?php echo json_encode($inscriptions_by_month); ?>;
     const revenueData = <?php echo json_encode($revenue_by_month); ?>;
     const filieresData = <?php echo json_encode($inscriptions_by_filiere); ?>;
 
-    // Months names
     const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
     
-    // Prepare inscriptions chart data
     const inscriptionsLabels = monthsData.map(d => monthNames[d.mois - 1]);
     const inscriptionsValues = monthsData.map(d => d.total);
 
-    // Prepare revenue chart data
     const revenueLabels = revenueData.map(d => monthNames[d.mois - 1]);
     const revenueValues = revenueData.map(d => parseFloat(d.total));
 
-    // Prepare filieres chart data
     const filieresLabels = filieresData.map(d => d.nom || 'N/A');
     const filieresValues = filieresData.map(d => d.total);
+
+    // Style personnalisé pour les graphiques
+    const chartColors = {
+        blue: '#667eea',
+        purple: '#764ba2',
+        green: '#f093fb',
+        orange: '#fa709a',
+        red: '#f5576c',
+        pink: '#ed64a6'
+    };
 
     // Inscriptions Chart
     const inscriptionsCtx = document.getElementById('inscriptionsChart').getContext('2d');
@@ -177,28 +388,51 @@ include __DIR__ . '/../includes/header.php';
             datasets: [{
                 label: 'Inscriptions',
                 data: inscriptionsValues,
-                borderColor: '#667eea',
-                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                borderColor: chartColors.blue,
+                backgroundColor: `rgba(${hexToRgb(chartColors.blue)}, 0.1)`,
                 borderWidth: 3,
                 fill: true,
                 tension: 0.4,
-                pointRadius: 5,
-                pointBackgroundColor: '#667eea'
+                pointRadius: 6,
+                pointBackgroundColor: chartColors.blue,
+                pointBorderColor: 'white',
+                pointBorderWidth: 2,
+                pointHoverRadius: 8
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
             plugins: {
-                legend: { display: false }
+                legend: { 
+                    display: false 
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    titleColor: 'white',
+                    bodyColor: 'white',
+                    borderColor: chartColors.blue,
+                    borderWidth: 1
+                }
             },
             scales: {
                 y: {
                     beginAtZero: true,
-                    ticks: { color: '#6b7280' }
+                    grid: {
+                        color: 'rgba(0,0,0,0.05)'
+                    },
+                    ticks: { 
+                        color: '#6b7280',
+                        font: { size: 12 }
+                    }
                 },
                 x: {
-                    ticks: { color: '#6b7280' }
+                    grid: {
+                        display: false
+                    },
+                    ticks: { 
+                        color: '#6b7280',
+                        font: { size: 12 }
+                    }
                 }
             }
         }
@@ -211,26 +445,56 @@ include __DIR__ . '/../includes/header.php';
         data: {
             labels: revenueLabels,
             datasets: [{
-                label: 'Revenus (XOF)',
+                label: 'Revenus ($)',
                 data: revenueValues,
-                backgroundColor: 'rgba(102, 126, 234, 0.8)',
-                borderColor: '#667eea',
-                borderWidth: 1
+                backgroundColor: `rgba(${hexToRgb(chartColors.purple)}, 0.6)`,
+                borderColor: chartColors.purple,
+                borderWidth: 2,
+                borderRadius: 8,
+                barPercentage: 0.6
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
             plugins: {
-                legend: { display: false }
+                legend: { 
+                    display: false 
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    titleColor: 'white',
+                    bodyColor: 'white',
+                    borderColor: chartColors.purple,
+                    borderWidth: 1,
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.parsed.y.toLocaleString()} $`;
+                        }
+                    }
+                }
             },
             scales: {
                 y: {
                     beginAtZero: true,
-                    ticks: { color: '#6b7280' }
+                    grid: {
+                        color: 'rgba(0,0,0,0.05)'
+                    },
+                    ticks: { 
+                        color: '#6b7280',
+                        font: { size: 12 },
+                        callback: function(value) {
+                            return value.toLocaleString() + ' $';
+                        }
+                    }
                 },
                 x: {
-                    ticks: { color: '#6b7280' }
+                    grid: {
+                        display: false
+                    },
+                    ticks: { 
+                        color: '#6b7280',
+                        font: { size: 12 }
+                    }
                 }
             }
         }
@@ -245,25 +509,66 @@ include __DIR__ . '/../includes/header.php';
             datasets: [{
                 data: filieresValues,
                 backgroundColor: [
-                    'rgba(102, 126, 234, 0.8)',
-                    'rgba(118, 75, 162, 0.8)',
-                    'rgba(237, 100, 166, 0.8)',
-                    'rgba(255, 154, 158, 0.8)',
-                    'rgba(250, 195, 126, 0.8)'
+                    `rgba(${hexToRgb(chartColors.blue)}, 0.8)`,
+                    `rgba(${hexToRgb(chartColors.purple)}, 0.8)`,
+                    `rgba(${hexToRgb(chartColors.green)}, 0.8)`,
+                    `rgba(${hexToRgb(chartColors.orange)}, 0.8)`,
+                    `rgba(${hexToRgb(chartColors.pink)}, 0.8)`
                 ],
-                borderColor: ['#667eea', '#764ba2', '#ed64a6', '#ff9a9e', '#fac37e'],
-                borderWidth: 2
+                borderColor: [
+                    chartColors.blue,
+                    chartColors.purple,
+                    chartColors.green,
+                    chartColors.orange,
+                    chartColors.pink
+                ],
+                borderWidth: 3,
+                hoverOffset: 15
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
             plugins: {
                 legend: {
                     position: 'bottom',
-                    labels: { color: '#6b7280' }
+                    labels: {
+                        color: '#2d3748',
+                        font: { size: 13 },
+                        padding: 20,
+                        usePointStyle: true,
+                        pointStyle: 'circle'
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    titleColor: 'white',
+                    bodyColor: 'white',
+                    borderColor: chartColors.blue,
+                    borderWidth: 1,
+                    callbacks: {
+                        label: function(context) {
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((context.parsed / total) * 100).toFixed(1);
+                            return `${context.label}: ${context.parsed} (${percentage}%)`;
+                        }
+                    }
                 }
             }
         }
+    });
+
+    // Fonction utilitaire pour convertir hex en rgb
+    function hexToRgb(hex) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 0, 0';
+    }
+
+    // Animation des barres de progression
+    document.querySelectorAll('.progress-bar-fill').forEach(bar => {
+        const width = bar.style.width;
+        bar.style.width = '0%';
+        setTimeout(() => {
+            bar.style.width = width;
+        }, 100);
     });
 </script>
